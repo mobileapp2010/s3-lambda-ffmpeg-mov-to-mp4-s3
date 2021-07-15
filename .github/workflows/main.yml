@@ -1,22 +1,22 @@
-name: deploy to lambda
-on: [push]
+on:
+  push:
+    branches:
+      - master
 jobs:
-  deploy_source:
-    name: build and deploy lambda
-    strategy:
-      matrix:
-        node-version: [12.x]
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: zip
-        uses: montudor/action-zip@v0.1.0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
-          args: zip -qq -r ./bundle.zip ./
-      - name: default deploy
-        uses: appleboy/lambda-action@master
+          python-version: "3.8"
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ap-south-1
-          function_name: my-function
-          zip_file: bundle.zip
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      # Build inside Docker containers
+      - run: sam build --use-container
+      # Prevent prompts and failure when the stack is unchanged
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
