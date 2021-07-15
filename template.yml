@@ -7,11 +7,11 @@ Parameters:
     Default: 180
   InputS3BucketName:
     Type: String
-    Default: 's3-lambda-ffmpeg-input-mov-bucket'
+    Default: 's3-lambda-ffmpeg-input-mov-bucket-litlight'
     MinLength: 3
   OutputS3BucketName:
     Type: String
-    Default: 's3-lambda-ffmpeg-output-mp4-bucket'
+    Default: 's3-lambda-ffmpeg-output-mp4-bucket-litlight'
     MinLength: 3
 Resources:
   InputS3Bucket:
@@ -24,7 +24,7 @@ Resources:
       Handler: index.handler
       Timeout: !Ref ConversionTimeout
       MemorySize: 1024
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       CodeUri: src/
       Layers:
         - 'arn:aws:lambda:ap-south-1:610075582436:layer:ffmpeg:1'
